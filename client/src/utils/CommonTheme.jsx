@@ -1,0 +1,1 @@
+export const commonTheme = "dark:bg-secondary bg-white rounded p-6  space-y-6 drop-shadow-lg";
