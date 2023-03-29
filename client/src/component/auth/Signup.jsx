@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../api/auth";
-import { useNotification } from "../../hooks";
+import { useAuth, useNotification } from "../../hooks";
 import { commonTheme } from "../../utils/CommonTheme";
+import { isValidEmail } from "../../utils/isValidEmail";
 import Container from "../Container";
 import CustomLink from "../CustomLink";
 import FormContainer from "../form/FormContainer";
@@ -11,13 +12,12 @@ import Submit from "../form/Submit";
 import Title from "../form/Title";
 
 const validator = ({ name, email, password }) => {
-  const isValidEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; //Search for email validator regex
   const isValidName = /^[a-z A-Z]+$/;
   if (!name.trim()) return { ok: false, error: "Name is missing" };
   if (!isValidName.test(name)) return { ok: false, error: "Invalid Name" }; //Checking validity of Name  This will Check Whether name is Between Ato Z alphabets
 
   if (!email.trim()) return { ok: false, error: "Email is missing" };
-  if (!isValidEmail.test(email)) return { ok: false, error: "Invalid Email" }; //Checking validity of Email This will Check Whether
+  if (!isValidEmail(email)) return { ok: false, error: "Invalid Email" }; //Checking validity of Email This will Check Whether
 
   if (!password.trim()) return { ok: false, error: "Password is missing" };
   if (password.length < 8)
@@ -26,6 +26,8 @@ const validator = ({ name, email, password }) => {
   return { ok: true };
 };
 const Signup = () => {
+  const { authInfo } = useAuth();
+  const { isLoggedIn } = authInfo;
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -44,18 +46,22 @@ const Signup = () => {
     e.preventDefault();
     const { ok, error } = validator(userInfo);
 
-    if (!ok)updateNotification('error',error);
+    if (!ok) updateNotification("error", error);
 
     const response = await createUser(userInfo);
-    if (response.error) return updateNotification('error',response.error);
+    if (response.error) return updateNotification("error", response.error);
 
     navigate("/auth/verification", {
       state: { user: response.user },
-      replace: true,     //this will make use to not to go to prev page with arrows at top left corner
+      replace: true, //this will make use to not to go to prev page with arrows at top left corner
     }); //passing the user because we need userId
     // console.log(response.user);
   };
   const { name, email, password } = userInfo;
+  useEffect(() => {
+    if (isLoggedIn) navigate("/");
+  }, [isLoggedIn]);
+
   return (
     <FormContainer>
       <Container>

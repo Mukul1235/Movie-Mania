@@ -5,13 +5,13 @@ import ThemeProvider from './ThemeProvider';
 
 function ContextProvider({children}) {
   return (
+    <NotificationProvider>
     <AuthProvider>
-      <NotificationProvider>
         <ThemeProvider>
           {children}
         </ThemeProvider>
-      </NotificationProvider>
-    </AuthProvider>
+        </AuthProvider>
+        </NotificationProvider>
   );
 }
 

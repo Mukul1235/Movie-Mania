@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser, signInUser } from "../../api/auth";
 import { useAuth, useNotification, useTheme } from "../../hooks";
 import { commonTheme } from "../../utils/CommonTheme";
+import { isValidEmail } from "../../utils/isValidEmail";
 
 import Container from "../Container";
 import CustomLink from "../CustomLink";
@@ -11,10 +12,9 @@ import FormInput from "../form/FormInput";
 import Submit from "../form/Submit";
 import Title from "../form/Title";
 
-const validator = ({  email, password }) => {
-  const isValidEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; //Search for email validator regex
+const validator = ({ email, password }) => {
   if (!email.trim()) return { ok: false, error: "Email is missing" };
-  if (!isValidEmail.test(email)) return { ok: false, error: "Invalid Email" }; //Checking validity of Email This will Check Whether
+  if (!isValidEmail(email)) return { ok: false, error: "Invalid Email" }; //Checking validity of Email This will Check Whether
 
   if (!password.trim()) return { ok: false, error: "Password is missing" };
   if (password.length < 8)
@@ -29,7 +29,8 @@ const Signin = () => {
     password: "",
   });
   const { authInfo, handleLogin } = useAuth();
-  console.log(authInfo)
+  const { isPending, isLoggedIn } = authInfo;
+  // console.log(authInfo);
   const { updateNotification } = useNotification();
 
   const handleChange = ({ target }) => {
@@ -43,12 +44,14 @@ const Signin = () => {
     const { ok, error } = validator(userInfo);
 
     if (!ok) updateNotification("error", error);
-
-    const response = await signInUser(userInfo);
-    console.log(response)
-    if (response.error) return updateNotification("error", response.error);
+    handleLogin(userInfo.email, userInfo.password);
 
   };
+  useEffect(() => {
+    if(isLoggedIn) navigate('/')
+  }, [isLoggedIn])
+  // console.log(isPending)
+  // isPending = false;
 
   return (
     <FormContainer>
@@ -68,8 +71,9 @@ const Signin = () => {
             label="Password"
             placeholder="********"
             name="password"
+            type="password"
           />
-          <Submit value="Sign In" />
+          <Submit value="Sign In" busy={isPending} />
           <div className="flex justify-between">
             <CustomLink to="/auth/forget-password">Forget password</CustomLink>
             <CustomLink to="/auth/signup">Sign up</CustomLink>

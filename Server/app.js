@@ -6,6 +6,7 @@ const cors=require("cors");
 require('express-async-errors');
 dotenv.config();
 const UserRouter = require("./routers/user");
+const ActorRouter = require("./routers/actor");
 const { errorHandler } = require("./middleware/errorHandler");
 const { handleNotfound } = require("./utils/helper");
 require("./db/index");
@@ -16,11 +17,12 @@ app.use(express.json());
 
 app.use(morgan("dev")); // this will tell where is the problem in code and it will return like POST /asd/asd/as statusCode:401
 app.use("/api/user", UserRouter);
+app.use("/api/actor", ActorRouter);
 app.use("/*",handleNotfound)
 
 app.use(errorHandler);
 
-const PORT = 6001;
+const PORT = 6004;
 app.listen(PORT, () => {
   console.log(`PORT IS RUNNING ON ${PORT}`.bold.green);
 });

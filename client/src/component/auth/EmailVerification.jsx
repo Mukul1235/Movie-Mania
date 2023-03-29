@@ -5,8 +5,8 @@ import FormContainer from "../form/FormContainer";
 import Submit from "../form/Submit";
 import Title from "../form/Title";
 import { useLocation, useNavigate } from "react-router-dom";
-import { verifyEmail } from "../../api/auth";
-import { useNotification } from "../../hooks";
+import { resendEmailVerificationToken, verifyEmail } from "../../api/auth";
+import { useAuth, useNotification } from "../../hooks";
 
 const OTP_LENGTH = 6;
 
@@ -19,8 +19,11 @@ const validOTP = (otp) => {
   return valid;
 };
 const EmailVerification = () => {
+  const { isAuth, authInfo } = useAuth();
+  const { isLoggedIn, profile } = authInfo;
+  const  isVerified  = profile?.isVerified;
   const { state } = useLocation(); //it will tell exerything we have on this URL useLocation();
-  const {updateNotification} = useNotification();
+  const { updateNotification } = useNotification();
   const user = state?.user;
   // console.log(state);
   console.log(user);
@@ -47,6 +50,13 @@ const EmailVerification = () => {
     setotp([...newOtp]);
   };
   const navigate = useNavigate();
+    const handleOTPResend = async () => {
+      const { error, message } = await resendEmailVerificationToken(user.id);
+
+      if (error) return updateNotification("error", error);
+
+      updateNotification("success", message);
+    };
   const handleKeyDown = ({ key }, index) => {
     //this will {key} d-structure the e.key which tell which key is pressed
     currentOtpIndex = index;
@@ -56,24 +66,31 @@ const EmailVerification = () => {
       focusPrevField(currentOtpIndex);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validOTP(otp)) return updateNotification("error", "Invalid OTP");
 
-    const { message, error } = await verifyEmail({ OTP: otp.join(""), userId: user.id });   //otp.join("") it will join whole array like ['1','2','3','4','5','6']====> '123456'
-    if (error) return updateNotification("error",error);
-
-    updateNotification("success",message);
+    const {
+      message,
+      error,
+      user: userResponse,
+    } = await verifyEmail({ OTP: otp.join(""), userId: user.id }); //otp.join("") it will join whole array like ['1','2','3','4','5','6']====> '123456'
+    if (error) return updateNotification("error", error);
+    localStorage.setItem("auth-token", userResponse.token);
+    isAuth();
+    updateNotification("success", message);
     // console.log(otp);
   };
   useEffect(() => {
     inputRef.current?.focus();
   }, [activeOtpIndex]);
 
-  // useEffect(() => {
-  //   if (!user) return navigate("/Not-Found");
-  // }, [user]);
+  useEffect(() => {
+    if (!user) return navigate("/Not-Found");
+    if (isLoggedIn && isVerified) return navigate("/");
+  }, [user, isLoggedIn,isVerified]);
 
   return (
     <FormContainer>
@@ -101,7 +118,15 @@ const EmailVerification = () => {
               );
             })}
           </div>
-          <Submit value="Send Link" />
+          <div>
+            <Submit value="Send Link" />
+            <button
+              type="button"
+              onClick={handleOTPResend}
+              className="dark:text-white text-blue-500 font-semibold hover:underline mt-2">
+              I don't have OTP
+            </button>
+          </div>
           <div className="flex justify-between"></div>
         </form>
       </Container>
