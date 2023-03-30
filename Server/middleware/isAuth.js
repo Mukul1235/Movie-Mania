@@ -25,7 +25,13 @@ exports.isAuth = async (req, res) => {
   const jwtToken = token.split("Bearer ")[1];
   const decode = jwt.verify(jwtToken, process.env.JWT_SECRET);
   const { userId } = decode;
-  const user = await User.findById(userId); 
+  const user = await User.findById(userId);
   // console.log(user)
   res.json({ user });
+};
+
+exports.isAdmin = async (req, res, next) => {
+  const { user } = req;
+  if (user.role != "admin") return sendError(res, "unauthorized access");
+  next();
 };

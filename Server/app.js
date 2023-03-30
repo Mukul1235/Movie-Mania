@@ -22,7 +22,7 @@ app.use("/*",handleNotfound)
 
 app.use(errorHandler);
 
-const PORT = 6004;
+const PORT = 6003;
 app.listen(PORT, () => {
   console.log(`PORT IS RUNNING ON ${PORT}`.bold.green);
 });

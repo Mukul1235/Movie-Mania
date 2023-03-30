@@ -11,7 +11,7 @@ const {
 } = require("../controllers/user");
 const { userValidator, validate, validatePassword, signInValidator } = require("../middleware/validator");
 const { isValidPasswordResetToken } = require("../middleware/user");
-const { isAuth } = require("../middleware/isAuth");
+const { isAuth, isAdmin } = require("../middleware/isAuth");
 const router = express.Router();
 
 router.post("/create", userValidator, validate, CreateUser);

@@ -245,12 +245,14 @@ exports.signIn = async (req, res) => {
   const matched = await user.comparePassword(password);
   if (!matched) return sendError(res, "Password/Email mismatch!");
 
-  const { _id, name, isVerified } = user;
+  const { _id, name, isVerified, role } = user;
   const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
     expiresIn: "7h",
   }); // 7 hr
 
-  res.json({ user: { id: _id, name, email, token: jwtToken, isVerified } });
+  res.json({
+    user: { id: _id, name, role, email, token: jwtToken, isVerified },
+  });
 };
 
 // exports.verifyToken = async (req, res) => {

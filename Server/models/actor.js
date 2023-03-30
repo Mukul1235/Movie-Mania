@@ -8,7 +8,7 @@ const actorSchema = mongoose.Schema(
       trim: true, // use to Remove White Spaces
       require: true,
     },
-    email: {
+    about: {
       type: String,
       trim: true, // use to Remove White Spaces
       require: true,
@@ -26,6 +26,8 @@ const actorSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+actorSchema.index({name:"text"})
 
 const Actor = mongoose.model("Actor", actorSchema);
 
