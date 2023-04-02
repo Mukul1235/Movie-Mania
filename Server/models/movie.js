@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const genres = require("../genres");
 
 const MovieSchema = mongoose.Schema({
   title: {
@@ -31,6 +32,22 @@ const MovieSchema = mongoose.Schema({
   genres: {
     type: [String],
     required: true,
-    enum: [],
+    enum: genres,
   },
+  tags: {
+    type: [String],
+    required: true,
+  },
+  casts: [
+    {
+      actor: { type: mongoose.Schema.Types.ObjectId, ref: "Actor" },
+      roleAs: String,
+      leadActor: Boolean,
+    },
+  ],
+  writers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+  ],
 });
