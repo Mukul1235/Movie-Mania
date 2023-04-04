@@ -43,3 +43,13 @@ exports.formatActor = (actor) => {
     avtar: avtar?.url,
   };
 };
+
+exports.parseData = (req, res, next) => {
+  const { trailerInfo, genres, tags, casts, writers } = req.body;
+  if (trailerInfo) req.body.trailerInfo = JSON.parse(trailerInfo);
+  if (genres) req.body.trailerInfo = JSON.parse(genres);
+  if (tags) req.body.trailerInfo = JSON.parse(tags);
+  if (casts) req.body.trailerInfo = JSON.parse(casts);
+  if (writers) req.body.trailerInfo = JSON.parse(writers);
+  next();
+};

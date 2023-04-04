@@ -7,6 +7,7 @@ require('express-async-errors');
 dotenv.config();
 const UserRouter = require("./routers/user");
 const ActorRouter = require("./routers/actor");
+const MovieRouter = require("./routers/movie");
 const { errorHandler } = require("./middleware/errorHandler");
 const { handleNotfound } = require("./utils/helper");
 require("./db/index");
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(morgan("dev")); // this will tell where is the problem in code and it will return like POST /asd/asd/as statusCode:401
 app.use("/api/user", UserRouter);
 app.use("/api/actor", ActorRouter);
+app.use("/api/movie", MovieRouter);
 app.use("/*",handleNotfound)
 
 app.use(errorHandler);

@@ -11,17 +11,18 @@ const router = require("../routers/user");
 exports.CreateUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log(req.body);
     const x = await User.findOne({ email });
     if (x) {
       return sendError(res, "User Already Exists");
     }
 
-    const user = await new User({ name, email, password });
+    const user = await new User(req.body);
     user.save();
 
     //generate 6 digit otp
     let OTP = generateOTP();
-
+    console.log(OTP);
     //store otp in out db
     const EmailVerificationToken1 = new EmailVerificationToken({
       owner: user._id,
@@ -94,6 +95,7 @@ exports.verifyEmail = async (req, res) => {
     const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7h",
     });
+    console.log(jwtToken);
 
     res.json({
       user: {
