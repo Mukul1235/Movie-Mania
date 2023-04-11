@@ -44,6 +44,7 @@ export const CheckerAuth = async (token) => {
         accept: "application/json",
       },
     });
+    // console.log(data);
     return data;
   } catch (error) {
     const { response } = error;

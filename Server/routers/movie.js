@@ -1,5 +1,5 @@
 const express = require("express");
-const { isAuth, isAdmin } = require("../middleware/isAuth");
+const { isAuth, isAdmin } = require("../middleware/Auth");
 const { uploadVideo, uploadImage } = require("../middleware/multer");
 const {
   uploadTrailer,

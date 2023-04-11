@@ -91,7 +91,7 @@ export default function ConfirmPassword() {
       token,
     });
     if (error) return updateNotification("error", error);
-    navigate("/auth/signin",{replace: true});
+    navigate("/auth/signin", { replace: true }); //It's a redirect, replacing the current entry in the history stack versus PUSHing a new entry onto the top like a regular navigation.
     return updateNotification("success", message);
   };
   

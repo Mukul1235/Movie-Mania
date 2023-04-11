@@ -52,7 +52,6 @@ const EmailVerification = () => {
   const navigate = useNavigate();
     const handleOTPResend = async () => {
       const { error, message } = await resendEmailVerificationToken(user.id);
-
       if (error) return updateNotification("error", error);
 
       updateNotification("success", message);
@@ -69,9 +68,7 @@ const EmailVerification = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validOTP(otp)) return updateNotification("error", "Invalid OTP");
-
     const {
       message,
       error,

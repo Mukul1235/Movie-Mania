@@ -10,7 +10,6 @@ const FormInput = ({ name, placeholder, label, ...rest }) => {
           className="bg-transparent rounded
                border-2 dark:border-dark-subtle
              dark:text-white dark:focus:border-white 
-            
              focus:dark-primary
                  p-1  peer transition outline-none border-light-subtle
                  "

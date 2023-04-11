@@ -7,7 +7,7 @@ import Container from "../Container";
 const NotVerified = () => {
   const { authInfo } = useAuth();
   const { isLoggedIn } = authInfo;
-  console.log(isLoggedIn);
+  // console.log(isLoggedIn);
   const isVerified = authInfo.profile?.isVerified;
   const navigate = useNavigate();
   const handleNavigate = () => {

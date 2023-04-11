@@ -47,6 +47,7 @@ exports.CreateUser = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -104,6 +105,7 @@ exports.verifyEmail = async (req, res) => {
         email: user.email,
         token: jwtToken,
         isVerified: user.isVerified,
+        role: user.role,
       },
       message: "Your email is verified",
     });
