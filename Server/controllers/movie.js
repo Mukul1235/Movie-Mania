@@ -65,7 +65,7 @@ exports.createMovie = async (req, res) => {
     newMovie.writers = writers;
   }
   // console.log(newMovie)
-  console.log(file)
+  console.log(file);
 
   const {
     secure_url: url,
@@ -136,7 +136,7 @@ exports.updateMovieWithoutPoster = async (req, res) => {
       return sendError(res, "Invalid director Id");
     newMovie.director = director;
   }
-  if (reviews) {
+  if (reviews) { 
     for (let i in reviews) {
       if (!isValidObjectId(i)) return sendError(res, "Invalid user Id");
     }

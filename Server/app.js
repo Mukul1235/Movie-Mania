@@ -2,7 +2,7 @@ const express = require("express");
 const colors = require("colors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
-const cors=require("cors");
+const cors=require("cors");               // this help in connection server and client
 require('express-async-errors');
 dotenv.config();
 const UserRouter = require("./routers/user");
@@ -24,7 +24,7 @@ app.use("/*",handleNotfound)
 
 app.use(errorHandler);
 
-const PORT = 6003;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`PORT IS RUNNING ON ${PORT}`.bold.green);
 });

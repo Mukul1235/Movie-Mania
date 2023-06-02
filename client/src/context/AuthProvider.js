@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 export const AuthContext = createContext();
 
 const defaultAuthInfo = {
-  profile: null,
+  profile: null, 
   isLoggedIn: false,
   isPending: false,
   error: "",

@@ -129,7 +129,7 @@ exports.resendEmailVerification = async (req, res) => {
     if (alreadyhastoken)
       return sendError(
         res,
-        "Only after one hour you can requrest for another token!"
+        "Only after one hour you can request for another token!"
       );
 
     //6digit otp
@@ -221,7 +221,7 @@ exports.resetPassword = async (req, res) => {
     user.password = newPassword;
     await user.save();
     await passwordResetToken.findByIdAndDelete(req.resetToken._id); // coming from middleware
-
+                    
     const transport = generateMailTransporter();
     transport.sendMail({
       from: "security@reviewapp.com",
