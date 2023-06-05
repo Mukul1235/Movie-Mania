@@ -3,6 +3,9 @@ import TagsInput from "../TagsInput";
 import { commonInputClasses } from "../../utils/CommonTheme";
 import LiveSearch from "../LiveSearch";
 import Submit from "../form/Submit";
+import { useNotification } from "../../hooks";
+import ModalsContainer from "../Modals/ModalsContainer";
+import WritersModal from "../Modals/WritersModal";
 
 export const results = [
   {
@@ -42,13 +45,14 @@ export const results = [
     name: "Edward Howell",
   },
 ];
+
 const defaultMovieInfo = {
   title: "",
   storyline: "",
   tags: [],
   casts: [],
   director: {},
-  writer: [],
+  writers: [],
   releaseDate: "",
   poster: null,
   genres: [],
@@ -56,21 +60,24 @@ const defaultMovieInfo = {
   languages: "",
   status: "",
 };
-  const renderItem = (result) => {
-    return (
-      <div className="flex rounded overflow-hidden">
-        <img src={result.avatar} alt="" className="w-16 h-16 object-cover" />
-        <p className="dark:text-white font-semibold">{result.name}</p>
-      </div>
-    );
-  };
+const renderItem = (result) => {
+  return (
+    <div className="flex rounded overflow-hidden">
+      <img src={result.avatar} alt="" className="w-16 h-16 object-cover" />
+      <p className="dark:text-white font-semibold">{result.name}</p>
+    </div>
+  );
+};
 const MovieForm = () => {
   const [movieInfo, setMovieInfo] = useState({ ...defaultMovieInfo });
+  const [showWritersModal, setWritersModal] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault(); // This will prevent default functions like if in input we  enter
     // then it will not automatically submit the input
     console.log(movieInfo);
   };
+  const { updateNotification } = useNotification();
+
   const handleChange = ({ target }) => {
     const { value, name } = target;
     setMovieInfo({ ...movieInfo, [name]: value });
@@ -78,47 +85,99 @@ const MovieForm = () => {
   const updateTags = (tags) => {
     setMovieInfo({ ...movieInfo, tags });
   };
-  const { title, storyline, director } = movieInfo;
+  const handleDirector = (director) => {
+    setMovieInfo({ ...movieInfo, director });
+  };
+
+  const handleWriter = (profile) => {
+    const { writers } = movieInfo;
+    console.log(profile);
+    for (let writer of writers) {
+      if (profile.id === writer.id) {
+        return updateNotification(
+          "warning",
+          "This profile is already selected!"
+        );
+      }
+    }
+    setMovieInfo({ ...movieInfo, writers: [...writers, profile] });
+  };
+  const { title, storyline, director, writers } = movieInfo;
 
   return (
-    <form onSubmit={handleSubmit} action="" className="flex  space-x-3">
-      <div className="w-[70%] h-5 space-y-5 ">
-        <div>
-          <Label htmlFor="title">Title</Label>
-          <input
-            type="text"
-            name="title"
-            value={title}
-            onChange={handleChange}
-            className={commonInputClasses + " font-semibold border-b-2 text-xl"}
-            placeholder="Titanic"
-          />
-        </div>
-        <div>
-          <Label htmlFor="storyline">Story line</Label>
-          <textarea
-            name="storyline"
-            value={storyline}
-            onChange={handleChange}
-            id="storyLine"
-            className={commonInputClasses + " resize-none h-24 border-b-2"}
-            placeholder="Movie story line..."></textarea>
-        </div>
-        <div>
-          <Label htmlFor="storyline">Tags</Label>
-          <TagsInput name="tags" onChange={updateTags} />
-        </div>
-        <LiveSearch
-          results={results}
-          placeholder="Search profile"
-          renderItem={renderItem}
-          onSelect={(result) => console.log(result)}
-        />
-        <Submit value="asd" />
-      </div>
+    <>
+      <form onSubmit={handleSubmit} action="" className="flex  space-x-3">
+        <div className="w-[70%] h-5 space-y-5 ">
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <input
+              type="text"
+              name="title"
+              value={title}
+              onChange={handleChange}
+              className={
+                commonInputClasses + " font-semibold border-b-2 text-xl"
+              }
+              placeholder="Titanic"
+            />
+          </div>
+          <div>
+            <Label htmlFor="storyline">Story line</Label>
+            <textarea
+              name="storyline"
+              value={storyline}
+              onChange={handleChange}
+              id="storyLine"
+              className={commonInputClasses + " resize-none h-24 border-b-2"}
+              placeholder="Movie story line..."></textarea>
+          </div>
+          <div>
+            <Label htmlFor="storyline">Tags</Label>
+            <TagsInput name="tags" onChange={updateTags} />
+          </div>
+          <div>
+            <Label htmlFor="director">Director</Label>
+            <LiveSearch
+              name="director"
+              results={results}
+              placeholder="Search profile"
+              renderItem={renderItem}
+              value={director.name}
+              // onSelect={(result) => console.log(result)}
+              onSelect={handleDirector}
+            />
+          </div>
+          <div>
+            <div className="flex justify-between">
+              <LabelwithBadge badge={writers.length} htmlFor="writers">
+                Writers
+              </LabelwithBadge>
+              <button
+                className="hover:underline text-primary dark:text-white transition"
+                onClick={() => setWritersModal(true)}>
+                View All
+              </button>
+            </div>
+            <LiveSearch
+              name="writers"
+              results={results}
+              placeholder="Search profile"
+              renderItem={renderItem}
+              // onSelect={(result) => console.log(result)}
+              onSelect={handleWriter}
+            />
+          </div>
 
-      <div className="w-[30%] h-5 bg-violet-500"></div>
-    </form>
+          <Submit value="asd" />
+        </div>
+
+        <div className="w-[30%] h-5 bg-violet-500"></div>
+      </form>
+      <WritersModal
+        onClose={() => setWritersModal(false)}
+        visible={showWritersModal}
+        profiles={writers}></WritersModal>
+    </>
   );
 };
 
@@ -129,6 +188,21 @@ const Label = ({ children, htmlFor }) => {
       className="dark:text-dark-subtle text-light-subtle font-semibold">
       {children}
     </label>
+  );
+};
+const LabelwithBadge = ({ children, htmlFor, badge }) => {
+  const renderBadge = () => {
+    return (
+      <span className="dark:bg-dark-subtle  translate-x-2 -translate-y-1 text-xs bg-light-subtle rounded-full absolute top-0 right-0 w-5  h-5 justify-center flex items-center text-white">
+        {badge >= 9 ? "9+" : badge}
+      </span>
+    );
+  };
+  return (
+    <div className="relative">
+      <Label htmlFor={htmlFor}>{children}</Label>
+      {renderBadge()}
+    </div>
   );
 };
 export default MovieForm;

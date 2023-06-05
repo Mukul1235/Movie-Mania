@@ -16,8 +16,8 @@ const NotificationProvider = ({ children }) => {
       case "success":
         setClasses("bg-green-500");
         break;
-      case "warking":
-        setClasses("bg-red-500");
+      case "warning":
+        setClasses("bg-orange-500");
         break;
       default:
         setClasses("bg-red-500");
