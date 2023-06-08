@@ -6,6 +6,7 @@ import Submit from "../form/Submit";
 import { useNotification } from "../../hooks";
 import ModalsContainer from "../Modals/ModalsContainer";
 import WritersModal from "../Modals/WritersModal";
+import CastForm from "./CastForm";
 
 export const results = [
   {
@@ -60,7 +61,7 @@ const defaultMovieInfo = {
   languages: "",
   status: "",
 };
-const renderItem = (result) => {
+export const renderItem = (result) => {
   return (
     <div className="flex rounded overflow-hidden">
       <img src={result.avatar} alt="" className="w-16 h-16 object-cover" />
@@ -88,6 +89,10 @@ const MovieForm = () => {
   const handleDirector = (director) => {
     setMovieInfo({ ...movieInfo, director });
   };
+  const handleCast = (cast) => {
+    const { casts } = movieInfo;
+    setMovieInfo({ ...movieInfo, casts:[...casts,cast]});
+  }
 
   const handleWriter = (profile) => {
     const { writers } = movieInfo;
@@ -102,6 +107,18 @@ const MovieForm = () => {
     }
     setMovieInfo({ ...movieInfo, writers: [...writers, profile] });
   };
+  const handleAssignWriter = (e) => {
+    // e.preventDefault();
+   setWritersModal(true);
+  }
+  const handleRemoveWriter = (profileid) => {
+    
+    const { writers } = movieInfo;
+    const newWriter = writers.filter(({ id }) => id !== profileid);
+    if (!newWriter.length) setWritersModal(false);
+    setMovieInfo({ ...movieInfo ,writers: [...newWriter]})
+    
+  }
   const { title, storyline, director, writers } = movieInfo;
 
   return (
@@ -152,11 +169,7 @@ const MovieForm = () => {
               <LabelwithBadge badge={writers.length} htmlFor="writers">
                 Writers
               </LabelwithBadge>
-              <button
-                className="hover:underline text-primary dark:text-white transition"
-                onClick={() => setWritersModal(true)}>
-                View All
-              </button>
+
             </div>
             <LiveSearch
               name="writers"
@@ -167,16 +180,20 @@ const MovieForm = () => {
               onSelect={handleWriter}
             />
           </div>
-
-          <Submit value="asd" />
+          <div>
+            <LabelwithBadge >Add Cast & Crew </LabelwithBadge>
+          <CastForm onSubmit={handleCast}/>
+          </div>
+          <Submit value="Submit" />
         </div>
 
         <div className="w-[30%] h-5 bg-violet-500"></div>
-      </form>
-      <WritersModal
+        <WritersModal
         onClose={() => setWritersModal(false)}
         visible={showWritersModal}
-        profiles={writers}></WritersModal>
+        profiles={writers}
+        onRemoveClick={handleRemoveWriter}></WritersModal>
+        </form>
     </>
   );
 };
@@ -190,7 +207,7 @@ const Label = ({ children, htmlFor }) => {
     </label>
   );
 };
-const LabelwithBadge = ({ children, htmlFor, badge }) => {
+const LabelwithBadge = ({ children, htmlFor, badge=0 }) => {
   const renderBadge = () => {
     return (
       <span className="dark:bg-dark-subtle  translate-x-2 -translate-y-1 text-xs bg-light-subtle rounded-full absolute top-0 right-0 w-5  h-5 justify-center flex items-center text-white">
@@ -205,4 +222,14 @@ const LabelwithBadge = ({ children, htmlFor, badge }) => {
     </div>
   );
 };
+
+const ViewAll = () => {
+  return (
+    <button
+      className="hover:underline text-primary dark:text-white transition"
+      onClick={handleAssignWriter}>
+      View All
+    </button>
+  );
+}
 export default MovieForm;
