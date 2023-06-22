@@ -18,7 +18,7 @@ const actorSchema = mongoose.Schema(
       trim: true, // use to Remove White Spaces
       require: true,
     },
-    avtar: {
+    avatar: {
       type: Object,
       url: String,
       public_id: String,

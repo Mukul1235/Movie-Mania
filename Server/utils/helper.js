@@ -34,13 +34,13 @@ exports.uploadImageToCloud = async (file) => {
 };
 
 exports.formatActor = (actor) => {
-  const { name, gender, about, _id, avtar } = actor;
+  const { name, gender, about, _id, avatar } = actor;
   return {
     id: _id,
     name,
     about,
     gender,
-    avtar: avtar?.url,
+    avatar: avatar?.url,
   };
 };
 
@@ -56,3 +56,4 @@ exports.parseData = (req, res, next) => {
   // console.log("asc")
   next();
 };
+

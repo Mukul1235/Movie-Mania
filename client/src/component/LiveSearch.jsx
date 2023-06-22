@@ -3,9 +3,9 @@ import { commonInputClasses } from "../utils/CommonTheme";
 
 export default function LiveSearch({
   value = "",
-  name,
   placeholder = "",
   results = [],
+  name,
   resultContainerStyle,
   selectedResultStyle,
   inputStyle,
@@ -15,6 +15,7 @@ export default function LiveSearch({
 }) {
   const [displaySearch, setDisplaySearch] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [defaultValue, setDefaultValue] = useState("");
 
   const handleOnFocus = () => {
     if (results.length) setDisplaySearch(true);
@@ -30,7 +31,10 @@ export default function LiveSearch({
   };
 
   const handleSelection = (selectedItem) => {
-    onSelect(selectedItem);
+    if (selectedItem) {
+      onSelect(selectedItem);
+      closeSearch();
+    }
   };
 
   const handleKeyDown = ({ key }) => {
@@ -40,11 +44,12 @@ export default function LiveSearch({
 
     // move selection up and down
     if (key === "ArrowDown") {
-      nextCount = (focusedIndex + 1) % results.length; //  this will give infinite loop FORMULA
+      nextCount = (focusedIndex + 1) % results.length;
     }
     if (key === "ArrowUp") {
-      nextCount = (focusedIndex + results.length - 1) % results.length; // this will give infinite loop FORMULA
+      nextCount = (focusedIndex + results.length - 1) % results.length;
     }
+    if (key === "Escape") return closeSearch();
 
     if (key === "Enter") return handleSelection(results[focusedIndex]);
 
@@ -57,6 +62,20 @@ export default function LiveSearch({
       : commonInputClasses + " border-2 rounded p-1 text-lg";
   };
 
+  const handleChange = (e) => {
+    setDefaultValue(e.target.value);
+    onChange && onChange(e);
+  };
+
+  useEffect(() => {
+    setDefaultValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    if (results.length) return setDisplaySearch(true);
+    setDisplaySearch(false);
+  }, [results.length]);
+
   return (
     <div
       tabIndex={1}
@@ -65,13 +84,13 @@ export default function LiveSearch({
       className="relative outline-none">
       <input
         type="text"
-        name={name}
         id={name}
+        name={name}
         className={getInputStyle()}
         placeholder={placeholder}
         onFocus={handleOnFocus}
-        value={value}
-        onChange={onChange}
+        value={defaultValue}
+        onChange={handleChange}
         // onBlur={handleOnBlur}
         // onKeyDown={handleKeyDown}
       />
@@ -135,7 +154,6 @@ const SearchResults = ({
               index === focusedIndex ? getSelectedClass() : ""
             }
             onMouseDown={() => onSelect(result)}
-            ref={index === focusedIndex ? resultContainer : null}
           />
         );
       })}
@@ -144,13 +162,12 @@ const SearchResults = ({
 };
 
 const ResultCard = forwardRef((props, ref) => {
-  // we use forwardRef because we can't pass ref as such to the function
   const {
-    item, //this is the result thing
+    item,
     renderItem,
     resultContainerStyle,
     selectedResultStyle,
-    onMouseDown, // this will be onclick function
+    onMouseDown,
   } = props;
 
   const getClasses = () => {

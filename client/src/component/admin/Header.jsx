@@ -4,13 +4,15 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { BsFillSunFill } from "react-icons/bs";
 import { useTheme } from "../../hooks";
 
-const Header = ({onAddActorClick,onAddMovieClick}) => {
-   const { ToggleTheme } = useTheme();
-    const [showOptions, setShowOptions] = useState(false);
-    const options = [
-      { title: "Add Movie", onClick: onAddMovieClick },
-      { title: "Add Actor", onClick: onAddActorClick },
-    ];
+const Header = ({ onAddActorClick, onAddMovieClick }) => {
+  const { ToggleTheme } = useTheme();
+  const [showOptions, setShowOptions] = useState(false);
+  const options = [
+    { title: "Add Movie", onClick: onAddMovieClick },
+    { title: "Add Actor", onClick: onAddActorClick },
+  ];
+
+
   return (
     <div className="flex items-center justify-between relative">
       <input
@@ -23,11 +25,11 @@ const Header = ({onAddActorClick,onAddMovieClick}) => {
         <button
           onClick={ToggleTheme}
           className="dark:text-white text-light-subtle">
-                  <BsFillSunFill size={24} />
+          <BsFillSunFill size={24} />
         </button>
         <button
           onClick={() => setShowOptions(true)}
-                  className="flex items-center space-x-2 dark:border-dark-subtle border-light-subtle
+          className="flex items-center space-x-2 dark:border-dark-subtle border-light-subtle
            dark:text-dark-subtle text-light-subtle hover:opacity-80
             transition font-semibold border-2 
           rounded text-lg px-3 py-1">
@@ -35,8 +37,8 @@ const Header = ({onAddActorClick,onAddMovieClick}) => {
           <AiOutlinePlus />
         </button>
         <CreateOptions
-                  visible={showOptions}
-                  options={options}
+          visible={showOptions}
+          options={options}
           onClose={() => setShowOptions(false)}
         />
       </div>
@@ -46,9 +48,13 @@ const Header = ({onAddActorClick,onAddMovieClick}) => {
 
 export default Header;
 
-const CreateOptions = ({ visible, onClose,options }) => {
+const CreateOptions = ({ visible, onClose, options }) => {
   const container = useRef();
   const containerID = "option-container";
+  const handleClick = (fn) => {
+    fn();
+    onClose();
+  };
   useEffect(() => {
     const handleClose = (e) => {
       if (!visible) return;
@@ -77,11 +83,10 @@ const CreateOptions = ({ visible, onClose,options }) => {
         // console.log("end")
         if (e.target.classList.contains("animate-scale-reverse")) onClose();
         e.target.classList.remove("animate-scale");
-          }}>
-          {options.map(({title,onClick}) => {
-              return <Option onClick={onClick}>{title}</Option>
-          })}
-
+      }}>
+      {options.map(({ title, onClick }) => {
+        return <Option key={title} onClick={() => handleClick(onClick)}>{title}</Option>;
+      })}
     </div>
   );
 };

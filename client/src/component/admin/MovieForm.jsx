@@ -1,104 +1,518 @@
-import React, { useEffect, useState } from "react";
-import TagsInput from "../TagsInput";
-import { commonInputClasses } from "../../utils/CommonTheme";
-import LiveSearch from "../LiveSearch";
-import Submit from "../form/Submit";
-import { useNotification } from "../../hooks";
-import ModalsContainer from "../Modals/ModalsContainer";
-import WritersModal from "../Modals/WritersModal";
-import CastForm from "./CastForm";
+// import React, { useEffect, useState } from "react";
+// import TagsInput from "../TagsInput";
+// import { commonInputClasses } from "../../utils/CommonTheme";
+// import LiveSearch from "../LiveSearch";
+// import Submit from "../form/Submit";
+// import { useNotification, useSearch } from "../../hooks";
+// import ModalsContainer from "../models/ModalsContainer";
+// import WritersModal from "../models/WritersModal";
+// import CastForm from "../form/CastForm";
+// import CastsModal from "../models/CastsModal";
+// import PosterSelector from "../PosterSelector";
+// import GenresSelector from "../GenresSelector";
+// import GenresModal from "../models/GenresModal";
+// import Selector from "../Selector";
+// import { searchActor } from "../../api/actor";
 
-export const results = [
-  {
-    id: "1",
-    avatar:
-      "https://images.unsplash.com/photo-1643713303351-01f540054fd7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    name: "John Doe",
-  },
-  {
-    id: "2",
-    avatar:
-      "https://images.unsplash.com/photo-1643883135036-98ec2d9e50a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    name: "Chandri Anggara",
-  },
-  {
-    id: "3",
-    avatar:
-      "https://images.unsplash.com/photo-1578342976795-062a1b744f37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    name: "Amin RK",
-  },
-  {
-    id: "4",
-    avatar:
-      "https://images.unsplash.com/photo-1564227901-6b1d20bebe9d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    name: "Edward Howell",
-  },
-  {
-    id: "5",
-    avatar:
-      "https://images.unsplash.com/photo-1578342976795-062a1b744f37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    name: "Amin RK",
-  },
-  {
-    id: "6",
-    avatar:
-      "https://images.unsplash.com/photo-1564227901-6b1d20bebe9d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    name: "Edward Howell",
-  },
-];
+// import {
+//   languageOptions,
+//   statusOptions,
+//   typeOptions,
+// } from "../../utils/options";
+
+// export const results = [
+//   {
+//     id: "1",
+//     avatar:
+//       "https://images.unsplash.com/photo-1643713303351-01f540054fd7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+//     name: "John Doe",
+//   },
+//   {
+//     id: "2",
+//     avatar:
+//       "https://images.unsplash.com/photo-1643883135036-98ec2d9e50a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+//     name: "Chandri Anggara",
+//   },
+//   {
+//     id: "3",
+//     avatar:
+//       "https://images.unsplash.com/photo-1578342976795-062a1b744f37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+//     name: "Amin RK",
+//   },
+//   {
+//     id: "4",
+//     avatar:
+//       "https://images.unsplash.com/photo-1564227901-6b1d20bebe9d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+//     name: "Edward Howell",
+//   },
+//   {
+//     id: "5",
+//     avatar:
+//       "https://images.unsplash.com/photo-1578342976795-062a1b744f37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+//     name: "Amin RK",
+//   },
+//   {
+//     id: "6",
+//     avatar:
+//       "https://images.unsplash.com/photo-1564227901-6b1d20bebe9d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
+//     name: "Edward Howell",
+//   },
+// ];
+
+// const Label = ({ children, htmlFor }) => {
+//   return (
+//     <label
+//       htmlFor={htmlFor}
+//       className="dark:text-dark-subtle text-light-subtle font-semibold">
+//       {children}
+//     </label>
+//   );
+// };
+// const LabelwithBadge = ({ children, htmlFor, badge = 0 }) => {
+//   const renderBadge = () => {
+//     if (!badge) return null;
+//     return (
+//       <span className="dark:bg-dark-subtle  translate-x-2 -translate-y-1 text-xs bg-light-subtle rounded-full absolute top-0 right-0 w-5  h-5 justify-center flex items-center text-white">
+//         {badge >= 9 ? "9+" : badge}
+//       </span>
+//     );
+//   };
+//   return (
+//     <div className="relative">
+//       <Label htmlFor={htmlFor}>{children}</Label>
+//       {renderBadge()}
+//     </div>
+//   );
+// };
+
+// const ViewAll = ({ children, visible, onClick }) => {
+//   if (!visible) return null;
+//   return (
+//     <button
+//       type="button"
+//       className="hover:underline text-primary dark:text-white transition "
+//       onClick={onClick}>
+//       {children}
+//     </button>
+//   );
+// };
+
+// const defaultMovieInfo = {
+//   title: "",
+//   storyline: "",
+//   tags: [],
+//   casts: [],
+//   director: {},
+//   writers: [],
+//   releaseDate: "",
+//   poster: null,
+//   genres: [],
+//   type: "",
+//   language: "",
+//   status: "",
+// };
+// export const renderItem = (result) => {
+//   return (
+//     <div className="flex rounded overflow-hidden">
+//       <img src={result.avatar} alt="" className="w-16 h-16 object-cover" />
+//       <p className="dark:text-white font-semibold">{result.name}</p>
+//     </div>
+//   );
+// };
+// const MovieForm = () => {
+//   const [movieInfo, setMovieInfo] = useState({ ...defaultMovieInfo });
+//   const [showWritersModal, setWritersModal] = useState(false);
+//   const [showCastsModal, setCastsModal] = useState(false);
+//   const [showGenresModal, setShowGenresModal] = useState(false);
+//   const [selectedPosterForUI, setSelectedPosterForUI] = useState("");
+//   const [writersProfile, setWritersProfile] = useState([]);
+//   const [directorsProfile, setDirectorsProfile] = useState([]);
+//   const [writerName, setWriterName] = useState("");
+//   const { updateNotification } = useNotification();
+
+//   const { handleSearch, results, resetSearch } = useSearch();
+//   // console.log(results);
+//   const handleSubmit = (e) => {
+//     e.preventDefault(); // This will prevent default functions like if in input we  enter
+//     // then it will not automatically submit the input
+//     console.log(movieInfo);
+//   };
+//   const handleProfileChange = ({ target }) => {
+//     const { name, value } = target;
+//       if (name === "director") {
+//         setMovieInfo({ ...movieInfo, director: { name: value } });
+//         handleSearch(searchActor, value, setDirectorsProfile);
+//       }
+//      if (name === "writers") {
+//        setWriterName(value);
+//        handleSearch(searchActor, value, setWritersProfile);
+//      }
+//   };
+
+//   const updatePosterForUI = (file) => {
+//     const url = URL.createObjectURL(file);
+//     setSelectedPosterForUI(url);
+//   };
+//   const handleChange = ({ target }) => {
+//     const { value, name, files } = target;
+//     if (name === "poster") {
+//       const poster = files[0];
+//       updatePosterForUI(poster);
+//       return setMovieInfo({ ...movieInfo, poster });
+//     }
+
+//     setMovieInfo({ ...movieInfo, [name]: value });
+//   };
+//   const updateTags = (tags) => {
+//     setMovieInfo({ ...movieInfo, tags });
+//   };
+//   const handleDirector = (director) => {
+//     setMovieInfo({ ...movieInfo, director });
+//     resetSearch();
+//   };
+//   const handleCast = (cast) => {
+//     const { casts } = movieInfo;
+//     setMovieInfo({ ...movieInfo, casts: [...casts, cast] });
+//   };
+//   const updateGenres = (genres) => {
+//     setMovieInfo({ ...movieInfo, genres });
+//   };
+
+//   const handleWriter = (profile) => {
+//     const { writers } = movieInfo;
+//     console.log(profile);
+//     for (let writer of writers) {
+//       if (profile.id === writer.id) {
+//         return updateNotification(
+//           "warning",
+//           "This profile is already selected!"
+//         );
+//       }
+//     }
+//     setMovieInfo({ ...movieInfo, writers: [...writers, profile] });
+//   };
+//   const displayWriterModal = (e) => {
+//     // e.preventDefault();
+//     setWritersModal(true);
+//   };
+
+//   const displayCastModal = (e) => {
+//     // e.preventDefault();
+//     setCastsModal(true);
+//   };
+//   const displayGenresModal = () => {
+//     setShowGenresModal(true);
+//   };
+
+//   const hideGenresModal = () => {
+//     setShowGenresModal(false);
+//   };
+
+//   const handleRemoveWriter = (profileid) => {
+//     const { writers } = movieInfo;
+//     const newWriter = writers.filter(({ id }) => id !== profileid);
+//     if (!newWriter.length) setWritersModal(false);
+//     setMovieInfo({ ...movieInfo, writers: [...newWriter] });
+//   };
+//   const handleRemoveCasts = (profileid) => {
+//     const { casts } = movieInfo;
+//     const newCasts = casts.filter(({ profile }) => profile.id !== profileid);
+//     if (!newCasts.length) setCastsModal(false);
+//     setMovieInfo({ ...movieInfo, casts: [...newCasts] });
+//   };
+//   const {
+//     title,
+//     storyline,
+//     director,
+//     writers,
+//     casts,
+//     tags,
+//     genres,
+//     type,
+//     language,
+//     status,
+//   } = movieInfo;
+
+//   return (
+//     <>
+//       <div action="" className="flex  space-x-3">
+//         <div className="w-[70%]  space-y-5 ">
+//           <div>
+//             <Label htmlFor="title">Title</Label>
+//             <input
+//               type="text"
+//               name="title"
+//               value={title}
+//               onChange={handleChange}
+//               className={
+//                 commonInputClasses + " font-semibold border-b-2 text-xl"
+//               }
+//               placeholder="Titanic"
+//             />
+//           </div>
+//           <div>
+//             <Label htmlFor="storyline">Story line</Label>
+//             <textarea
+//               name="storyline"
+//               value={storyline}
+//               onChange={handleChange}
+//               id="storyLine"
+//               className={commonInputClasses + " resize-none h-24 border-b-2"}
+//               placeholder="Movie story line..."></textarea>
+//           </div>
+//           <div>
+//             <Label htmlFor="storyline">Tags</Label>
+//             <TagsInput value={tags} name="tags" onChange={updateTags} />
+//           </div>
+//           <div>
+//             <Label htmlFor="director">Director</Label>
+//             <LiveSearch
+//               name="director"
+//               results={directorsProfile}
+//               placeholder="Search profile"
+//               renderItem={renderItem}
+//               value={director.name}
+//               onChange={handleProfileChange}
+//               visible={directorsProfile.length}
+//               onSelect={handleDirector}
+//             />
+//           </div>
+//           <div>
+//             <div className="flex justify-between">
+//               <LabelwithBadge badge={writers.length} htmlFor="writers">
+//                 Writers
+//               </LabelwithBadge>
+//               <ViewAll onClick={displayWriterModal} visible={writers.length}>
+//                 View All
+//               </ViewAll>
+//             </div>
+//             <LiveSearch
+//               name="writers"
+//               results={writersProfile}
+//               placeholder="Search profile"
+//               renderItem={renderItem}
+//               onChange={handleProfileChange}
+//               value={writerName}
+//               visible={writersProfile.length}
+//               // onSelect={(result) => console.log(result)}
+//               onSelect={handleWriter}
+//             />
+//           </div>
+//           <div>
+//             <div className="flex justify-between">
+//               <LabelwithBadge badge={casts.length} htmlFor="casts">
+//                 Add Cast & Crew{" "}
+//               </LabelwithBadge>
+//               <ViewAll visible={casts.length} onClick={displayCastModal}>
+//                 View All
+//               </ViewAll>
+//             </div>
+//             <CastForm onSubmit={handleCast} />
+//           </div>
+//           <input
+//             type="date"
+//             className={commonInputClasses + "border-2 rounded p-1 w-auto"}
+//             onChange={handleChange}
+//             name="releaseDate"
+//           />
+//           <Submit value="Upload" onClick={handleSubmit} type="button" />
+//         </div>
+//         <div className="w-[30%] space-y-5">
+//           <PosterSelector
+//             name="poster"
+//             onChange={handleChange}
+//             selectedPoster={selectedPosterForUI}
+//             accept="image/jpg,image/jpeg,image/png"
+//             label="Select avatar"
+//           />
+//           <GenresSelector
+//             onClick={displayGenresModal}
+//             badge={genres.length}></GenresSelector>
+//           <Selector
+//             onChange={handleChange}
+//             name="type"
+//             value={type}
+//             options={typeOptions}
+//             label="Type"
+//           />
+//           <Selector
+//             name="language"
+//             value={language}
+//             onChange={handleChange}
+//             options={languageOptions}
+//             label="Language"
+//           />
+//           <Selector
+//             name="status"
+//             value={status}
+//             onChange={handleChange}
+//             options={statusOptions}
+//             label="Status"
+//           />
+//         </div>
+//       </div>
+//       <WritersModal
+//         onClose={() => setWritersModal(false)}
+//         visible={showWritersModal}
+//         profiles={writers}
+//         onRemoveClick={handleRemoveWriter}></WritersModal>
+//       <CastsModal
+//         onClose={() => setCastsModal(false)}
+//         visible={showCastsModal}
+//         casts={casts}
+//         onRemoveClick={handleRemoveCasts}></CastsModal>
+//       <GenresModal
+//         onSubmit={updateGenres}
+//         visible={showGenresModal}
+//         onClose={hideGenresModal}
+//         previousSelection={genres}
+//       />
+//     </>
+//   );
+// };
+
+// export default MovieForm;
+
+import React, { useState } from "react";
+import { searchActor } from "../../api/actor";
+import { useNotification, useSearch } from "../../hooks";
+import {
+  languageOptions,
+  statusOptions,
+  typeOptions,
+} from "../../utils/options";
+import { commonInputClasses } from "../../utils/CommonTheme";
+import CastForm from "../form/CastForm";
+import Submit from "../form/Submit";
+import GenresSelector from "../GenresSelector";
+import LiveSearch from "../LiveSearch";
+import CastModal from "../models/CastsModal";
+import GenresModal from "../models/GenresModal";
+import ModalContainer from "../models/ModalsContainer";
+import WritersModal from "../models/WritersModal";
+import PosterSelector from "../PosterSelector";
+import Selector from "../Selector";
+import TagsInput from "../TagsInput";
+import { renderItem } from "../../utils/isValidEmail";
+import Label from "../Label";
+import DirectorSelector from "../DirectorSelector";
+import WriterSelector from "../WriterSelector";
+import ViewAllBtn from "../ViewAllButton";
+import LabelWithBadge from "../LabelWithBadge";
 
 const defaultMovieInfo = {
   title: "",
-  storyline: "",
+  storyLine: "",
   tags: [],
-  casts: [],
+  cast: [],
   director: {},
   writers: [],
-  releaseDate: "",
+  releseDate: "",
   poster: null,
   genres: [],
   type: "",
-  languages: "",
+  language: "",
   status: "",
 };
-export const renderItem = (result) => {
-  return (
-    <div className="flex rounded overflow-hidden">
-      <img src={result.avatar} alt="" className="w-16 h-16 object-cover" />
-      <p className="dark:text-white font-semibold">{result.name}</p>
-    </div>
-  );
+
+export const validateMovie = (movieInfo) => {
+  const {
+    title,
+    storyLine,
+    language,
+    releseDate,
+    status,
+    type,
+    genres,
+    tags,
+    cast,
+  } = movieInfo;
+
+  if (!title.trim()) return { error: "Title is missing!" };
+  if (!storyLine.trim()) return { error: "Story line is missing!" };
+  if (!language.trim()) return { error: "Language is missing!" };
+  if (!releseDate.trim()) return { error: "Relese date is missing!" };
+  if (!status.trim()) return { error: "Status is missing!" };
+  if (!type.trim()) return { error: "Type is missing!" };
+
+  // validation for genres we are checking if genres is an array or not
+  if (!genres.length) return { error: "Genres are missing!" };
+  // we are checking genres needs to field with string value
+  for (let gen of genres) {
+    if (!gen.trim()) return { error: "Invalid genres!" };
+  }
+
+  // validation for tags we are checking if tags is an array or not
+  if (!tags.length) return { error: "Tags are missing!" };
+  // we are checking tags needs to field with string value
+  for (let tag of tags) {
+    if (!tag.trim()) return { error: "Invalid tags!" };
+  }
+
+  // validation for cast we are checking if cast is an array or not
+  if (!cast.length) return { error: "Cast and crew are missing!" };
+  // we are checking tags needs to field with string value
+  for (let c of cast) {
+    if (typeof c !== "object") return { error: "Invalid cast!" };
+  }
+
+  return { error: null };
 };
-const MovieForm = () => {
+
+export default function MovieForm() {
   const [movieInfo, setMovieInfo] = useState({ ...defaultMovieInfo });
-  const [showWritersModal, setWritersModal] = useState(false);
-  const handleSubmit = (e) => {
-    e.preventDefault(); // This will prevent default functions like if in input we  enter
-    // then it will not automatically submit the input
-    console.log(movieInfo);
-  };
+  const [showWritersModal, setShowWritersModal] = useState(false);
+  const [showCastModal, setShowCastModal] = useState(false);
+  const [selectedPosterForUI, setSelectedPosterForUI] = useState("");
+  const [showGenresModal, setShowGenresModal] = useState(false);
+
   const { updateNotification } = useNotification();
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { error } = validateMovie(movieInfo);
+
+    if (error) return console.log(error);
+    console.log(movieInfo);
+  };
+
+  const updatePosterForUI = (file) => {
+    const url = URL.createObjectURL(file);
+    setSelectedPosterForUI(url);
+  };
+
   const handleChange = ({ target }) => {
-    const { value, name } = target;
+    const { value, name, files } = target;
+    if (name === "poster") {
+      const poster = files[0];
+      updatePosterForUI(poster);
+      return setMovieInfo({ ...movieInfo, poster });
+    }
+
     setMovieInfo({ ...movieInfo, [name]: value });
   };
+
   const updateTags = (tags) => {
     setMovieInfo({ ...movieInfo, tags });
   };
-  const handleDirector = (director) => {
-    setMovieInfo({ ...movieInfo, director });
-  };
-  const handleCast = (cast) => {
-    const { casts } = movieInfo;
-    setMovieInfo({ ...movieInfo, casts:[...casts,cast]});
-  }
 
-  const handleWriter = (profile) => {
+  const updateDirector = (profile) => {
+    setMovieInfo({ ...movieInfo, director: profile });
+  };
+
+  const updateCast = (castInfo) => {
+    const { cast } = movieInfo;
+    setMovieInfo({ ...movieInfo, cast: [...cast, castInfo] });
+  };
+
+  const updateGenres = (genres) => {
+    setMovieInfo({ ...movieInfo, genres });
+  };
+
+  const updateWriters = (profile) => {
     const { writers } = movieInfo;
-    console.log(profile);
     for (let writer of writers) {
-      if (profile.id === writer.id) {
+      if (writer.id === profile.id) {
         return updateNotification(
           "warning",
           "This profile is already selected!"
@@ -107,129 +521,184 @@ const MovieForm = () => {
     }
     setMovieInfo({ ...movieInfo, writers: [...writers, profile] });
   };
-  const handleAssignWriter = (e) => {
-    // e.preventDefault();
-   setWritersModal(true);
-  }
-  const handleRemoveWriter = (profileid) => {
-    
+
+  const hideWritersModal = () => {
+    setShowWritersModal(false);
+  };
+
+  const displayWritersModal = () => {
+    setShowWritersModal(true);
+  };
+
+  const hideCastModal = () => {
+    setShowCastModal(false);
+  };
+
+  const displayCastModal = () => {
+    setShowCastModal(true);
+  };
+
+  const hideGenresModal = () => {
+    setShowGenresModal(false);
+  };
+
+  const displayGenresModal = () => {
+    setShowGenresModal(true);
+  };
+
+  const handleWriterRemove = (profileId) => {
     const { writers } = movieInfo;
-    const newWriter = writers.filter(({ id }) => id !== profileid);
-    if (!newWriter.length) setWritersModal(false);
-    setMovieInfo({ ...movieInfo ,writers: [...newWriter]})
-    
-  }
-  const { title, storyline, director, writers } = movieInfo;
+    const newWriters = writers.filter(({ id }) => id !== profileId);
+    if (!newWriters.length) hideWritersModal();
+    setMovieInfo({ ...movieInfo, writers: [...newWriters] });
+  };
+
+  const handleCastRemove = (profileId) => {
+    const { cast } = movieInfo;
+    const newCast = cast.filter(({ profile }) => profile.id !== profileId);
+    if (!newCast.length) hideCastModal();
+    setMovieInfo({ ...movieInfo, cast: [...newCast] });
+  };
+
+  const {
+    title,
+    storyLine,
+    writers,
+    cast,
+    tags,
+    releseDate,
+    genres,
+    type,
+    language,
+    status,
+  } = movieInfo;
 
   return (
     <>
-      <form onSubmit={handleSubmit} action="" className="flex  space-x-3">
-        <div className="w-[70%] h-5 space-y-5 ">
+      <div onSubmit={handleSubmit} className="flex space-x-3">
+        <div className="w-[70%] space-y-5">
           <div>
             <Label htmlFor="title">Title</Label>
             <input
-              type="text"
-              name="title"
+              id="title"
               value={title}
               onChange={handleChange}
+              name="title"
+              type="text"
               className={
-                commonInputClasses + " font-semibold border-b-2 text-xl"
+                commonInputClasses + " border-b-2 font-semibold text-xl"
               }
               placeholder="Titanic"
             />
           </div>
+
           <div>
-            <Label htmlFor="storyline">Story line</Label>
+            <Label htmlFor="storyLine">Story line</Label>
             <textarea
-              name="storyline"
-              value={storyline}
+              value={storyLine}
               onChange={handleChange}
+              name="storyLine"
               id="storyLine"
-              className={commonInputClasses + " resize-none h-24 border-b-2"}
-              placeholder="Movie story line..."></textarea>
+              className={commonInputClasses + " border-b-2 resize-none h-24"}
+              placeholder="Movie storyline..."></textarea>
           </div>
+
           <div>
-            <Label htmlFor="storyline">Tags</Label>
-            <TagsInput name="tags" onChange={updateTags} />
+            <Label htmlFor="tags">Tags</Label>
+            <TagsInput value={tags} name="tags" onChange={updateTags} />
           </div>
-          <div>
-            <Label htmlFor="director">Director</Label>
-            <LiveSearch
-              name="director"
-              results={results}
-              placeholder="Search profile"
-              renderItem={renderItem}
-              value={director.name}
-              // onSelect={(result) => console.log(result)}
-              onSelect={handleDirector}
-            />
+
+          <DirectorSelector onSelect={updateDirector} />
+
+          <div className="">
+            <div className="flex justify-between">
+              <LabelWithBadge badge={writers.length} htmlFor="writers">
+                Writers
+              </LabelWithBadge>
+              <ViewAllBtn
+                onClick={displayWritersModal}
+                visible={writers.length}>
+                View All
+              </ViewAllBtn>
+            </div>
+            <WriterSelector onSelect={updateWriters} />
           </div>
+
           <div>
             <div className="flex justify-between">
-              <LabelwithBadge badge={writers.length} htmlFor="writers">
-                Writers
-              </LabelwithBadge>
-
+              <LabelWithBadge badge={cast.length}>
+                Add Cast & Crew
+              </LabelWithBadge>
+              <ViewAllBtn onClick={displayCastModal} visible={cast.length}>
+                View All
+              </ViewAllBtn>
             </div>
-            <LiveSearch
-              name="writers"
-              results={results}
-              placeholder="Search profile"
-              renderItem={renderItem}
-              // onSelect={(result) => console.log(result)}
-              onSelect={handleWriter}
-            />
+            <CastForm onSubmit={updateCast} />
           </div>
-          <div>
-            <LabelwithBadge >Add Cast & Crew </LabelwithBadge>
-          <CastForm onSubmit={handleCast}/>
-          </div>
-          <Submit value="Submit" />
-        </div>
 
-        <div className="w-[30%] h-5 bg-violet-500"></div>
-        <WritersModal
-        onClose={() => setWritersModal(false)}
+          <input
+            type="date"
+            className={commonInputClasses + " border-2 rounded p-1 w-auto"}
+            onChange={handleChange}
+            name="releseDate"
+            value={releseDate}
+          />
+
+          <Submit value="Upload" onClick={handleSubmit} type="button" />
+        </div>
+        <div className="w-[30%] space-y-5">
+          <PosterSelector
+            name="poster"
+            onChange={handleChange}
+            selectedPoster={selectedPosterForUI}
+            lable="Select poster"
+            accept="image/jpg, image/jpeg, image/png"
+          />
+          <GenresSelector badge={genres.length} onClick={displayGenresModal} />
+
+          <Selector
+            onChange={handleChange}
+            name="type"
+            value={type}
+            options={typeOptions}
+            label="Type"
+          />
+          <Selector
+            onChange={handleChange}
+            name="language"
+            value={language}
+            options={languageOptions}
+            label="Language"
+          />
+          <Selector
+            onChange={handleChange}
+            name="status"
+            value={status}
+            options={statusOptions}
+            label="Status"
+          />
+        </div>
+      </div>
+
+      <WritersModal
+        onClose={hideWritersModal}
         visible={showWritersModal}
         profiles={writers}
-        onRemoveClick={handleRemoveWriter}></WritersModal>
-        </form>
+        onRemoveClick={handleWriterRemove}
+      />
+
+      <CastModal
+        onClose={hideCastModal}
+        casts={cast}
+        visible={showCastModal}
+        onRemoveClick={handleCastRemove}
+      />
+      <GenresModal
+        onSubmit={updateGenres}
+        visible={showGenresModal}
+        onClose={hideGenresModal}
+        previousSelection={genres}
+      />
     </>
   );
-};
-
-const Label = ({ children, htmlFor }) => {
-  return (
-    <label
-      htmlFor={htmlFor}
-      className="dark:text-dark-subtle text-light-subtle font-semibold">
-      {children}
-    </label>
-  );
-};
-const LabelwithBadge = ({ children, htmlFor, badge=0 }) => {
-  const renderBadge = () => {
-    return (
-      <span className="dark:bg-dark-subtle  translate-x-2 -translate-y-1 text-xs bg-light-subtle rounded-full absolute top-0 right-0 w-5  h-5 justify-center flex items-center text-white">
-        {badge >= 9 ? "9+" : badge}
-      </span>
-    );
-  };
-  return (
-    <div className="relative">
-      <Label htmlFor={htmlFor}>{children}</Label>
-      {renderBadge()}
-    </div>
-  );
-};
-
-const ViewAll = () => {
-  return (
-    <button
-      className="hover:underline text-primary dark:text-white transition"
-      onClick={handleAssignWriter}>
-      View All
-    </button>
-  );
 }
-export default MovieForm;

@@ -16,7 +16,7 @@ router.post(
   "/create",
   isAuth,
   isAdmin,
-  uploadImage.single("avtar"),
+  uploadImage.single("avatar"),
   actorValidator,
   validate,
   create
@@ -25,7 +25,7 @@ router.post(
   "/update/:ActorId",
   isAuth,
   isAdmin,
-  uploadImage.single("avtar"),
+  uploadImage.single("avatar"),
   actorValidator,
   validate,
   updateActor

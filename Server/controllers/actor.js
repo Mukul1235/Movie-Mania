@@ -15,10 +15,10 @@ exports.create = async (req, res) => {
   if (file) {
     const { url, public_id } = await uploadImageToCloud(file);
 
-    newActor.avtar = { url, public_id };
+    newActor.avatar = { url, public_id };
   }
   await newActor.save();
-  res.json(formatActor(newActor));
+  res.json({ actor: formatActor(newActor) });
 };
 
 exports.updateActor = async (req, res) => {
@@ -28,9 +28,9 @@ exports.updateActor = async (req, res) => {
   if (!isValidObjectId(ActorId)) return sendError(res, "Invalid request");
   const actor = await Actor.findById(ActorId);
   if (!actor) return sendError(res, "Invalid request,record not found");
-  const public_id = actor.avtar?.public_id;
+  const public_id = actor.avatar?.public_id;
 
-  //removing the existing actor avtar and creating a new one
+  //removing the existing actor avatar and creating a new one
   if (public_id && file) {
     const { result } = await cloudinary.uploader.destroy(public_id);
     if (result != "ok")
@@ -40,7 +40,7 @@ exports.updateActor = async (req, res) => {
   //adding a new image if initially dont exist
   if (file) {
     const { url, public_id } = await uploadImageToCloud(file);
-    actor.avtar = { url, public_id };
+    actor.avatar = { url, public_id };
   }
   actor.name = name;
   actor.about = about;
@@ -55,7 +55,7 @@ exports.removeActor = async (req, res) => {
   if (!isValidObjectId(ActorId)) return sendError(res, "Invalid request");
   const actor = await Actor.findById(ActorId);
   if (!actor) return sendError(res, "Invalid request,record not found");
-  const public_id = actor.avtar?.public_id;
+  const public_id = actor.avatar?.public_id;
 
   if (public_id) {
     const { result } = await cloudinary.uploader.destroy(public_id);
@@ -70,8 +70,11 @@ exports.searchActor = async (req, res) => {
   const { query } = req;
 
   const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
-    const actor = result.map((actor) => formatActor(actor));
-  res.json(formatActor(actor));
+  
+  const actor = result.map((actor) => formatActor(actor));
+  // console.log(actor)
+  res.json(formatActor({ results: actor }));
+  // res.json({actor})
 };
 
 exports.getLatestActor = async (req, res) => {

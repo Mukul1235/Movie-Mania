@@ -4,8 +4,9 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNotification } from "../../hooks";
 import { uploadTrailer } from "../../api/movies";
 import MovieForm from "./MovieForm";
+import ModalsContainer from "../models/ModalsContainer";
 
-const MovieUpload = () => {
+const MovieUpload = ({visible,onClose}) => {
   const { updateNotification } = useNotification();
   const [videoSelector, setvideoSelector] = useState(false);
   const [VideoUploaded, setVideoUploaded] = useState(false);
@@ -68,12 +69,14 @@ const MovieUpload = () => {
         //   handleTypeError={handleTypeError}
         //   visible={!videoSelector}
         // />
+    // <div className="fixed inset-0 dark:bg-white dark:bg-opacity-50 bg-primary bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
+    // <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto custom-scroll-bar p-2"></div>
   return (
-    <div className="fixed inset-0 dark:bg-white dark:bg-opacity-50 bg-primary bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
-      <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto custom-scroll-bar p-2">
-        <MovieForm />
-      </div>
-    </div>
+    <ModalsContainer visible={visible} onClose={onClose}>
+  
+    <MovieForm />
+
+    </ModalsContainer>
   );
 };
 
