@@ -46,7 +46,7 @@ exports.updateActor = async (req, res) => {
   actor.about = about;
   actor.gender = gender;
   await actor.save();
-  res.json(formatActor(actor));
+  res.status(201).json({actor:formatActor(actor)});
 };
 
 exports.removeActor = async (req, res) => {
@@ -67,14 +67,15 @@ exports.removeActor = async (req, res) => {
 };
 
 exports.searchActor = async (req, res) => {
-  const { query } = req;
+  const { name } = req.query;
+  // const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
+  if (!name.trim()) return sendError(res, "Invalid request!");
+  const result = await Actor.find({
+    name: { $regex: name, $options: "i" },
+  });
 
-  const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
-  
-  const actor = result.map((actor) => formatActor(actor));
-  // console.log(actor)
-  res.json(formatActor({ results: actor }));
-  // res.json({actor})
+  const actors = result.map((actor) => formatActor(actor));
+  res.json({ results: actors });
 };
 
 exports.getLatestActor = async (req, res) => {
@@ -89,4 +90,18 @@ exports.getSingleActor = async (req, res) => {
   const actor = await Actor.findById(id);
   if (!actor) return sendError(res, "Invalid request ,actor not found");
   res.json(formatActor(actor));
+};
+
+exports.getActors = async (req, res) => {
+  const { pageNo, limit } = req.query;
+ const actors= await Actor.find({})
+    .sort({createdAt:-1})
+    .skip(parseInt(pageNo) * parseInt(limit))
+    .limit(parseInt(limit));
+  console.log(actors)
+  const profiles = actors.map(actor => formatActor(actor));
+  console.log(profiles);
+  res.json({
+    profiles:profiles,
+  })
 };

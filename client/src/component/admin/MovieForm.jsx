@@ -4,7 +4,7 @@
 // import LiveSearch from "../LiveSearch";
 // import Submit from "../form/Submit";
 // import { useNotification, useSearch } from "../../hooks";
-// import ModalsContainer from "../models/ModalsContainer";
+// import ModalsContainer from "../models/modelsContainer";
 // import WritersModal from "../models/WritersModal";
 // import CastForm from "../form/CastForm";
 // import CastsModal from "../models/CastsModal";
@@ -388,7 +388,7 @@ import GenresSelector from "../GenresSelector";
 import LiveSearch from "../LiveSearch";
 import CastModal from "../models/CastsModal";
 import GenresModal from "../models/GenresModal";
-import ModalContainer from "../models/ModalsContainer";
+import ModalContainer from "../models/ModalContainer";
 import WritersModal from "../models/WritersModal";
 import PosterSelector from "../PosterSelector";
 import Selector from "../Selector";
@@ -399,6 +399,7 @@ import DirectorSelector from "../DirectorSelector";
 import WriterSelector from "../WriterSelector";
 import ViewAllBtn from "../ViewAllButton";
 import LabelWithBadge from "../LabelWithBadge";
+import { validateMovie } from "../../utils/validator";
 
 const defaultMovieInfo = {
   title: "",
@@ -415,51 +416,7 @@ const defaultMovieInfo = {
   status: "",
 };
 
-export const validateMovie = (movieInfo) => {
-  const {
-    title,
-    storyLine,
-    language,
-    releseDate,
-    status,
-    type,
-    genres,
-    tags,
-    cast,
-  } = movieInfo;
-
-  if (!title.trim()) return { error: "Title is missing!" };
-  if (!storyLine.trim()) return { error: "Story line is missing!" };
-  if (!language.trim()) return { error: "Language is missing!" };
-  if (!releseDate.trim()) return { error: "Relese date is missing!" };
-  if (!status.trim()) return { error: "Status is missing!" };
-  if (!type.trim()) return { error: "Type is missing!" };
-
-  // validation for genres we are checking if genres is an array or not
-  if (!genres.length) return { error: "Genres are missing!" };
-  // we are checking genres needs to field with string value
-  for (let gen of genres) {
-    if (!gen.trim()) return { error: "Invalid genres!" };
-  }
-
-  // validation for tags we are checking if tags is an array or not
-  if (!tags.length) return { error: "Tags are missing!" };
-  // we are checking tags needs to field with string value
-  for (let tag of tags) {
-    if (!tag.trim()) return { error: "Invalid tags!" };
-  }
-
-  // validation for cast we are checking if cast is an array or not
-  if (!cast.length) return { error: "Cast and crew are missing!" };
-  // we are checking tags needs to field with string value
-  for (let c of cast) {
-    if (typeof c !== "object") return { error: "Invalid cast!" };
-  }
-
-  return { error: null };
-};
-
-export default function MovieForm() {
+export default function MovieForm({ onSubmit }) {
   const [movieInfo, setMovieInfo] = useState({ ...defaultMovieInfo });
   const [showWritersModal, setShowWritersModal] = useState(false);
   const [showCastModal, setShowCastModal] = useState(false);
@@ -471,11 +428,46 @@ export default function MovieForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { error } = validateMovie(movieInfo);
+    if (error) return updateNotification("error", error);
 
-    if (error) return console.log(error);
-    console.log(movieInfo);
+    // cast, tags, genres, writers
+    const { tags, genres, cast, writers, director, poster } = movieInfo;
+
+    const formData = new FormData();
+    const finalMovieInfo = {
+      ...movieInfo,
+    };
+
+    finalMovieInfo.tags = JSON.stringify(tags);
+    finalMovieInfo.genres = JSON.stringify(genres);
+
+    // {
+    //   actor: { type: mongoose.Schema.Types.ObjectId, ref: "Actor" },
+    //   roleAs: String,
+    //   leadActor: Boolean,
+    // },
+    // console.log(cast)
+    const finalCast = cast.map((c) => ({
+      actor: c.profile.id,
+      roleAs: c.roleAs,
+      leadActor: c.leadActor,
+    }));
+    finalMovieInfo.cast = JSON.stringify(finalCast);
+
+    if (writers.length) {
+      const finalWriters = writers.map((w) => w.id);
+      finalMovieInfo.writers = JSON.stringify(finalWriters);
+    }
+
+    if (director.id) finalMovieInfo.director = director.id;
+    if (poster) finalMovieInfo.poster = poster;
+
+    for (let key in finalMovieInfo) {
+      formData.append(key, finalMovieInfo[key]);
+    }
+
+    onSubmit(formData);
   };
-
   const updatePosterForUI = (file) => {
     const url = URL.createObjectURL(file);
     setSelectedPosterForUI(url);
@@ -485,6 +477,7 @@ export default function MovieForm() {
     const { value, name, files } = target;
     if (name === "poster") {
       const poster = files[0];
+      console.log(poster);
       updatePosterForUI(poster);
       return setMovieInfo({ ...movieInfo, poster });
     }

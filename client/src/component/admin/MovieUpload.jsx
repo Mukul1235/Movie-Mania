@@ -2,99 +2,95 @@ import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNotification } from "../../hooks";
-import { uploadTrailer } from "../../api/movies";
+import { uploadMovie, uploadTrailer } from "../../api/movies";
 import MovieForm from "./MovieForm";
-import ModalsContainer from "../models/ModalsContainer";
+import ModalsContainer from "../models/ModalContainer";
+export default function MovieUpload({ visible, onClose }) {
+  const [videoSelected, setVideoSelected] = useState(false);
+  const [videoUploaded, setVideoUploaded] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [videoInfo, setVideoInfo] = useState({});
+  const [busy, setBusy] = useState(false);
 
-const MovieUpload = ({visible,onClose}) => {
   const { updateNotification } = useNotification();
-  const [videoSelector, setvideoSelector] = useState(false);
-  const [VideoUploaded, setVideoUploaded] = useState(false);
-  const [uploadprogress, setUploadProgress] = useState(0); // this will store the progress of the upload
-  const [videoUploadInfo, setvideoUploadInfo] = useState({}); //this will store link of url and public id when video get uploaded
-  const [MovieInfo, setmovieInfo] = useState({
-    title: "",
-    storyline: "",
-    status: "",
-    type: "",
-    languages: "",
-    director: {},
-    releaseDate: {},
-    poster: {},
-    trailer: {
-      url: "",
-      public_id: "",
-    },
-    genres: [],
-    tags: [],
-    casts: [],
-    writers: [],
-    reviews: [],
-  });
 
-  const handleVideoUpload = async (data) => {
-    const { url, error, public_id } = await uploadTrailer(
+  const handleTypeError = (error) => {
+    updateNotification("error", error);
+  };
+
+  const handleUploadTrailer = async (data) => {
+    const { error, url, public_id } = await uploadTrailer(
       data,
       setUploadProgress
     );
     if (error) return updateNotification("error", error);
+
     setVideoUploaded(true);
+    setVideoInfo({ url, public_id });
+  };
 
-    setvideoUploadInfo({ url, public_id });
+  const handleChange = (file) => {
+    const formData = new FormData();
+    formData.append("video", file);
+
+    setVideoSelected(true);
+    handleUploadTrailer(formData);
   };
-  console.log(videoUploadInfo)
-  const handleChange = async (file) => {
-    const formData = new FormData(); //this api will create formData
-    formData.append("video", file); //this will work as same as in backend we use .single('video') instead
-    setvideoSelector(true);
-    handleVideoUpload(formData);
-  };
-  const handleTypeError = (error) => {
-    updateNotification("error", error);
-  };
+
   const getUploadProgressValue = () => {
-    if (!VideoUploaded && uploadprogress >= 100) {
-      return "Processing ";
+    if (!videoUploaded && uploadProgress >= 100) {
+      return "Processing";
     }
-    return `Upload progress ${uploadprogress}% `;
-  };
-  // useEffect(() => {}, [videoSelector]);
-        // <UploadProgress
-        //   visible={!VideoUploaded && videoSelector}
-        //   message={getUploadProgressValue()}
-        //   width={uploadprogress}
-        // />
-        // <TrailerUpload
-        //   handleChange={handleChange}
-        //   handleTypeError={handleTypeError}
-        //   visible={!videoSelector}
-        // />
-    // <div className="fixed inset-0 dark:bg-white dark:bg-opacity-50 bg-primary bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
-    // <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto custom-scroll-bar p-2"></div>
-  return (
-    <ModalsContainer visible={visible} onClose={onClose}>
-  
-    <MovieForm />
 
+    return `Upload progress ${uploadProgress}%`;
+  };
+
+  const handleSubmit = async (data) => {
+    // console.log(videoInfo.url);
+    if (!videoInfo.url || !videoInfo.public_id)
+      return updateNotification("error", "Trailer is missing!");
+
+    setBusy(true);
+    data.append("trailer", JSON.stringify(videoInfo));
+    const res = await uploadMovie(data);
+    setBusy(false);
+    console.log(res);
+
+    onClose();
+  };
+
+  return (
+    <ModalsContainer visible={visible}>
+      <div className="mb-5">
+        <UploadProgress
+          visible={!videoUploaded && videoSelected}
+          message={getUploadProgressValue()}
+          width={uploadProgress}
+        />
+      </div>
+      {!videoSelected ? (
+        <TrailerSelector
+          visible={!videoSelected}
+          onTypeError={handleTypeError}
+          handleChange={handleChange}
+        />
+      ) : (
+        <MovieForm busy={busy} onSubmit={!busy ? handleSubmit : null} />
+      )}
     </ModalsContainer>
   );
-};
+}
 
-const TrailerUpload = ({ visible, handleChange, handleTypeError }) => {
+const TrailerSelector = ({ visible, handleChange, onTypeError }) => {
   if (!visible) return null;
 
   return (
-    <div className="flex  h-full justify-center items-center">
+    <div className="h-full flex items-center justify-center">
       <FileUploader
-        types={["mp4", "avi"]}
-        onTypeError={handleTypeError}
-        handleChange={handleChange}>
-        <div
-          className="w-48 h-48 border border-dashed
-           dark:border-dark-subtle border-light-subtle rounded-full
-           flex flex-col items-center justify-center text-secondary dark:text-dark-subtle
-            cursor-pointer 
-           ">
+        handleChange={handleChange}
+        onTypeError={onTypeError}
+        types={["mp4", "avi"]}>
+        <div className="w-48 h-48 border border-dashed dark:border-dark-subtle border-light-subtle rounded-full flex flex-col items-center justify-center dark:text-dark-subtle text-secondary cursor-pointer">
           <AiOutlineCloudUpload size={80} />
           <p>Drop your file here!</p>
         </div>
@@ -103,23 +99,20 @@ const TrailerUpload = ({ visible, handleChange, handleTypeError }) => {
   );
 };
 
-const UploadProgress = ({ message, width, visible }) => {
+const UploadProgress = ({ width, message, visible }) => {
   if (!visible) return null;
+
   return (
-    <div className="p-2">
-      <div
-        className="dark:bg-secondary bg-white 
-          drop-shadow-lg rounded p-3">
-        <div className="h-3 dark:bg-dark-subtle overflow-hidden bg-light-subtle relative">
-          <div
-            style={{ width: width + "%" }}
-            className="h-full dark:bg-white absolute left-0 bg-secondary"></div>
-        </div>
-        <p className=" mt-1 font-semibold dark:text-dark-subtle text-light-subtle animate-pulse">
-          {message}
-        </p>
+    <div className="dark:bg-secondary bg-white drop-shadow-lg rounded p-3">
+      <div className="relative h-3 dark:bg-dark-subtle bg-light-subtle overflow-hidden">
+        <div
+          style={{ width: width + "%" }}
+          className="h-full absolute left-0 dark:bg-white bg-secondary"
+        />
       </div>
+      <p className="font-semibold dark:text-dark-subtle text-light-subtle animate-pulse mt-1">
+        {message}
+      </p>
     </div>
   );
 };
-export default MovieUpload;
