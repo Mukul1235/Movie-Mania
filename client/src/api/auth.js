@@ -1,6 +1,7 @@
 import client from "./client";
 
 export const createUser = async (userInfo) => {
+  // console.log(userInfo);
   try {
     const { data } = await client.post("/user/create", userInfo);
     return data;

@@ -39,6 +39,6 @@ router.get('/actors'
   , isAuth,
   isAdmin,
   getActors)
-router.get("/single/:id", isAuth, isAdmin, getSingleActor);
+router.get("/single/:id", getSingleActor);
 
 module.exports = router;

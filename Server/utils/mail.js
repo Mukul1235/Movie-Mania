@@ -11,12 +11,13 @@ exports.generateOTP = (otp_length = 6) => {
   return OTP;
 };
 
-exports.generateMailTransporter = () =>
- nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-      user: "0c7aa0d48da3dc",
-      pass: "9139fdbd266ef6",
-    },
-  });
+// exports.generateMailTransporter = () => {
+//   nodemailer.createTransport({
+//     host: "sandbox.smtp.mailtrap.io",
+//     port: 2525,
+//     auth: {
+//       user: "46f86211b26f1f",
+//       pass: "2642cf350f69ad"
+//     }
+//   });
+// }

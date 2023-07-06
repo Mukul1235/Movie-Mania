@@ -8,6 +8,9 @@ dotenv.config();
 const UserRouter = require("./routers/user");
 const ActorRouter = require("./routers/actor");
 const MovieRouter = require("./routers/movie");
+const reviewRouter = require("./routers/review");
+const adminRouter = require("./routers/admin");
+
 const { errorHandler } = require("./middleware/errorHandler");
 const { handleNotfound } = require("./utils/helper");
 require("./db/index");
@@ -20,6 +23,10 @@ app.use(morgan("dev")); // this will tell where is the problem in code and it wi
 app.use("/api/user", UserRouter);
 app.use("/api/actor", ActorRouter);
 app.use("/api/movie", MovieRouter);
+app.use("/api/review", reviewRouter);
+app.use("/api/admin", adminRouter);
+
+
 app.use("/*",handleNotfound)
 
 app.use(errorHandler);

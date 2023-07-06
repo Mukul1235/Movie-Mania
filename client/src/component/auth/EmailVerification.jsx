@@ -26,7 +26,7 @@ const EmailVerification = () => {
   const { updateNotification } = useNotification();
   const user = state?.user;
   // console.log(state);
-  console.log(user);
+  // console.log(user);
   const [otp, setotp] = useState(new Array(OTP_LENGTH).fill(""));
   const [activeOtpIndex, setActiveOtpIndex] = useState(0);
   const focusNextField = (index) => {

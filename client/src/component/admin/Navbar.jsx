@@ -12,7 +12,7 @@ const AdminNavbar = () => {
     <nav className="w-48 min-h-screen bg-secondary border-r border-gray-500 ">
       <div className="flex flex-col justify-between pl-5 sticky h-screen top-0">
         <ul className="">
-          <li className=" mb-8">
+          <li className=" mb-8 ">
             <Link to="/">
               <img src="./logo.png" alt="logo" className="h-14 p-2" />
             </Link>

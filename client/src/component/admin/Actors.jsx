@@ -113,7 +113,7 @@ export default function Actors() {
         </div>
         <NotFoundText text="Record not found" visible={resultNotFound} />
 
-        <div className="grid grid-cols-4 gap-5 p-5">
+        <div className="grid grid-cols-2 gap-5 p-5">
           {results.length || resultNotFound
             ? results.map((actor) => (
                 <ActorProfile

@@ -1,26 +1,25 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks'
-import Container from './Container';
-import NotVerified from './user/NotVerified';
+import React from "react";
+import Container from "./Container";
+import HeroSlideshow from "./user/HeroSlideshow";
+import NotVerified from "./user/NotVerified";
+import TopRatedMovies from "./user/TopRatedMovies";
+import TopRatedTVSeries from "./user/TopRatedTVSeries";
+import TopRatedWebSeries from "./user/TopRatedWebSeries";
 
-const Home = () => {
-
+export default function Home() {
   return (
-<NotVerified />
+    <div className="dark:bg-primary bg-white min-h-screen">
+      <Container className="px-2 xl:p-0">
+        <NotVerified />
+        {/* slider */}
+        <HeroSlideshow />
+        {/* Most rated movies */}
+        <div className="space-y-3 py-8">
+          <TopRatedMovies />
+          <TopRatedWebSeries />
+          <TopRatedTVSeries />
+        </div>
+      </Container>
+    </div>
   );
-};
-
-export default Home
-
-
-// import React from 'react'
-
-// const Home = () => {
-//   const { authInfo } = useAuth();
-//   const isVerified = authInfo.profile?.isVerified;
-//   const { isLoggedIn } = authInfo;
-//   return ({isLoggedIn!isVerified? (< Container ><Container/>):null});
-// }
-
-// export default Home
+}

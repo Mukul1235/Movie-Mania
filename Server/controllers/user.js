@@ -9,50 +9,47 @@ const jwt = require("jsonwebtoken");
 const router = require("../routers/user");
 
 exports.CreateUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    console.log(req.body);
-    const x = await User.findOne({ email });
-    if (x) {
-      return sendError(res, "User Already Exists");
-    }
+const { name, email, password } = req.body;
 
-    const user = await new User(req.body);
-    user.save();
+const oldUser = await User.findOne({ email });
 
-    //generate 6 digit otp
-    let OTP = generateOTP();
-    console.log(OTP);
-    //store otp in out db
-    const EmailVerificationToken1 = new EmailVerificationToken({
-      owner: user._id,
-      token: OTP,
-    });
-    await EmailVerificationToken1.save();
-    //send that otp to our user
-    var transport = generateMailTransporter();
+if (oldUser) return sendError(res, "This email is already in use!");
 
-    console.log(OTP);
-    transport.sendMail({
-      from: "verification@reviewapp.com",
-      to: user.email,
-      subject: "Email Verification",
-      html: `
-        <p>Your verification OTP</p>
-        <h1>${OTP}</h1>
-        `,
-    });
-    res.status(201).json({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    sendError(res, error.message);
-  }
+const newUser = new User({ name, email, password });
+await newUser.save();
+
+// generate 6 digit otp
+let OTP = generateOTP();
+  console.log(OTP);
+// store otp inside our db
+const newEmailVerificationToken = new EmailVerificationToken({
+  owner: newUser._id,
+  token: OTP,
+});
+
+await newEmailVerificationToken.save();
+
+// send that otp to our user
+
+var transport = generateMailTransporter();
+
+transport.sendMail({
+  from: "verification@reviewapp.com",
+  to: newUser.email,
+  subject: "Email Verification",
+  html: `
+      <p>You verification OTP</p>
+      <h1>${OTP}</h1>
+    `,
+});
+
+res.status(201).json({
+  user: {
+    id: newUser._id,
+    name: newUser.name,
+    email: newUser.email,
+  },
+});
 };
 
 exports.verifyEmail = async (req, res) => {
@@ -77,26 +74,20 @@ exports.verifyEmail = async (req, res) => {
     await user.save();
 
     EmailVerificationToken.findByIdAndDelete(token._id);
-    var transport = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: process.env.MAIL_TRAP_USER,
-        pass: process.env.MAIL_TRAP_PASSWORD,
-      },
-    });
-    transport.sendMail({
-      from: "verification@reviewapp.com",
-      to: user.email,
-      subject: "Welcome Email ",
-      html: `
-      <h1>Welcome to our app and thanks for choosing us.</h1>
-      `,
-    });
+  
+  var transport = generateMailTransporter();
+
+  transport.sendMail({
+    from: "verification@reviewapp.com",
+    to: user.email,
+    subject: "Welcome Email",
+    html: "<h1>Welcome to our app and thanks for choosing us.</h1>",
+  });
+
     const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7h",
     });
-    console.log(jwtToken);
+    // console.log(jwtToken);
 
     res.json({
       user: {

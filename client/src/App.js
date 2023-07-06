@@ -10,16 +10,20 @@ import ConfirmPassword from "./component/auth/ConfirmPassword";
 import NotFound from "./component/NotFound";
 import { useAuth } from "./hooks";
 import AdminNavigator from "./navigator/AdminNavigator";
+import SingleMovie from "./component/user/SingleMovie";
+import MovieReviews from "./component/user/MovieReviews";
+import SearchMovies from "./component/user/SearchMovies";
+
+
 
 function App() {
-  const { authInfo, isAuth } = useAuth();
-  const isAdmin = authInfo.profile?.role === 'admin';
-  // console.log(isAdmin);
+  const { authInfo } = useAuth();
+  const isAdmin = authInfo.profile?.role === "admin";
+
   if (isAdmin) return <AdminNavigator />;
   return (
     <>
-      <Navbar />
-
+        <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth/signin" element={<Signin />} />
@@ -27,7 +31,11 @@ function App() {
         <Route path="/auth/verification" element={<EmailVerification />} />
         <Route path="/auth/forget-password" element={<ForgetPassword />} />
         <Route path="/auth/reset-password" element={<ConfirmPassword />} />
-        <Route path="/*" element={<NotFound />} />
+        <Route path="/movie/:movieId" element={<SingleMovie />} />
+        <Route path="/movie/reviews/:movieId" element={<MovieReviews />} />
+                <Route path="/movie/search" element={<SearchMovies />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
